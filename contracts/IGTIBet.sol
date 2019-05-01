@@ -1,9 +1,8 @@
 pragma solidity ^0.4.20;
 
-  contract Bet {
+  contract IGTIBet {
 
-
-    //jedi bet status
+    //Better status
     uint constant STATUS_WIN = 1;
     uint constant STATUS_LOSE = 2;
     uint constant STATUS_TIE = 3;
@@ -18,7 +17,7 @@ pragma solidity ^0.4.20;
     uint constant STATUS_ERROR = 4;
 
     //the 'better' structure
-    struct JediBet {
+    struct Better {
       uint guess;
       address addr;
       uint status;
@@ -29,8 +28,8 @@ pragma solidity ^0.4.20;
       uint256 betAmount;
       uint outcome;
       uint status;
-      JediBet originator;
-      JediBet taker;
+      Better originator;
+      Better taker;
     }
 
     //the game
@@ -40,14 +39,17 @@ pragma solidity ^0.4.20;
     function() public payable {}
 
     function createBet(uint _guess) public payable {
-      game = Game(msg.value, 0, STATUS_STARTED, JediBet(_guess, msg.sender, STATUS_PENDING), JediBet(0, 0, STATUS_NOT_STARTED));
-      game.originator = JediBet(_guess, msg.sender, STATUS_PENDING);
+      Better memory creatorBet = Better(_guess, msg.sender, STATUS_PENDING);
+      Better memory takerBet =  Better(0, 0, STATUS_NOT_STARTED);
+      
+      game = Game(msg.value, 0, STATUS_STARTED, creatorBet, takerBet);
+      game.originator = Better(_guess, msg.sender, STATUS_PENDING);
     }
 
     function takeBet(uint _guess) public payable { 
       //requires the taker to make the same bet amount     
       require(msg.value == game.betAmount);
-      game.taker = JediBet(_guess, msg.sender, STATUS_PENDING);
+      game.taker = Better(_guess, msg.sender, STATUS_PENDING);
       generateBetOutcome();
     }
 
@@ -107,18 +109,11 @@ pragma solidity ^0.4.20;
           game.originator.status = STATUS_TIE;
           game.taker.status = STATUS_TIE;
         } else {
-           if ((game.outcome - game.originator.guess) < (game.outcome - game.taker.guess)) {
-             game.originator.status = STATUS_WIN;
-             game.taker.status = STATUS_LOSE;
-           } else if ((game.outcome - game.taker.guess) < (game.outcome - game.originator.guess)) {
-             game.originator.status = STATUS_LOSE;
-             game.taker.status = STATUS_WIN;
-           } else {
              game.originator.status = STATUS_ERROR;
              game.taker.status = STATUS_ERROR;
              game.status = STATUS_ERROR;
            }
-        }
+        
     }
 
      //returns - [<description>, 'originator', <originator status>, 'taker', <taker status>]
@@ -140,5 +135,4 @@ pragma solidity ^0.4.20;
         originatorStatus = game.originator.status;
         takerKey = "taker";
         takerStatus = game.taker.status;
-     }
   }
