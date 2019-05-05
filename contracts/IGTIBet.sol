@@ -117,7 +117,7 @@ pragma solidity ^0.4.20;
     }
 
      //returns - [<description>, 'originator', <originator status>, 'taker', <taker status>]
-     function getBetOutcome() public view returns
+     function getBetOutcom() public view returns
      (string description, string originatorKey, uint originatorStatus, string takerKey, uint takerStatus) 
      {
         if (game.originator.status == STATUS_TIE || game.taker.status == STATUS_TIE) {
