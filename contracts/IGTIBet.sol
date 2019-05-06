@@ -118,7 +118,7 @@ pragma solidity ^0.4.20;
 
      //returns - [<description>, 'originator', <originator status>, 'taker', <taker status>]
      function getBetOutcom() public view returns
-     (string description, string originatorKey, uint originatorStatus, string takerKey, uint takerStatus) 
+     (string description, string originatorKey, uint originatorStatus, string takerKey, uint takerStatus)
      {
         if (game.originator.status == STATUS_TIE || game.taker.status == STATUS_TIE) {
           description = "Both bets were the same or were over the number, the pot will be split";
@@ -136,3 +136,4 @@ pragma solidity ^0.4.20;
         takerKey = "taker";
         takerStatus = game.taker.status;
   }
+}
